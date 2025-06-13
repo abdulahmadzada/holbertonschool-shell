@@ -1,32 +1,39 @@
 #!/usr/bin/env bash
-# This init-like script starts, stops, or restarts the manage_my_process script
+# Init script to manage the my_process daemon
 
 PID_FILE="/var/run/my_process.pid"
-PROCESS_SCRIPT="$(pwd)/manage_my_process"
+PROCESS="./manage_my_process"
 
 case "$1" in
-  start)
-    "$PROCESS_SCRIPT" &
-    echo $! > "$PID_FILE"
-    echo "manage_my_process started"
-    ;;
-  stop)
-    if [ -f "$PID_FILE" ]; then
-      kill "$(cat "$PID_FILE")" 2>/dev/null
-      rm -f "$PID_FILE"
-    fi
-    echo "manage_my_process stopped"
-    ;;
-  restart)
-    if [ -f "$PID_FILE" ]; then
-      kill "$(cat "$PID_FILE")" 2>/dev/null
-      rm -f "$PID_FILE"
-    fi
-    "$PROCESS_SCRIPT" &
-    echo $! > "$PID_FILE"
-    echo "manage_my_process restarted"
-    ;;
-  *)
-    echo "Usage: manage_my_process {start|stop|restart}"
-    ;;
+    start)
+        # Start the process
+        $PROCESS &
+        echo $! > "$PID_FILE"
+        echo "manage_my_process started"
+        ;;
+    stop)
+        # Stop the process
+        if [ -f "$PID_FILE" ]; then
+            kill "$(cat "$PID_FILE")"
+            rm -f "$PID_FILE"
+        fi
+        echo "manage_my_process stopped"
+        ;;
+    restart)
+        # Restart the process
+        if [ -f "$PID_FILE" ]; then
+            kill "$(cat "$PID_FILE")"
+            rm -f "$PID_FILE"
+        fi
+        $PROCESS &
+        echo $! > "$PID_FILE"
+        echo "manage_my_process restarted"
+        ;;
+    *)
+        # Invalid arguments
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+        ;;
 esac
+
+exit 0
