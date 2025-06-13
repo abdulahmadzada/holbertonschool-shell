@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 # Displays PID and process name for processes containing 'bash' without using ps
 
-while read -r pid comm; do
-    if [[ "$comm" == *bash* ]]; then
-        echo "$pid $comm"
+while IFS= read -r proc; do
+    pid=${proc##*/}
+    if comm=$(cat "$proc/comm" 2>/dev/null); then
+        if [[ "$comm" == *bash* ]]; then
+            echo "$pid $comm"
+        fi
     fi
-done < <(find /proc -maxdepth 1 -type d -name '[0-9]*' -exec basename {} \; \
-          -exec sh -c 'echo {} $(cat /proc/{}/comm 2>/dev/null)' \; 2>/dev/null)
+done < <(find /proc -maxdepth 1 -type d -name '[0-9]*' 2>/dev/null)
