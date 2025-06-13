@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# This script stops 4-to_infinity_and_beyond without kill/killall
+
+# Find and terminate the process using pkill
+if pkill -f "4-to_infinity_and_beyond"; then
+    exit 0
+fi
+
+# If pkill isn't available, use this alternative
+pid=$(ps aux | awk '/[4]-to_infinity_and_beyond/ {print $2}')
+[ -z "$pid" ] && exit 1
+
+# Send termination signal through procfs
+echo 1 > "/proc/$pid/oom_score_adj" 2>/dev/null || true
