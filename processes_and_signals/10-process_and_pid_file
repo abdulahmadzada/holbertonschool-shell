@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
-# This script creates a PID file, handles signals, and prints messages indefinitely
+# This script creates a PID file in /var/run, handles signals, and prints messages indefinitely
 
-PIDFILE="/tmp/myscript.pid"
+PIDFILE="/var/run/myscript.pid"
+
+if ! echo "$$" > "$PIDFILE" 2>/dev/null; then
+    echo "Error: Cannot write PID file to $PIDFILE. Permission denied." >&2
+    exit 1
+fi
 
 cleanup() {
     rm -f "$PIDFILE"
@@ -16,8 +21,6 @@ term_handler() {
 int_handler() {
     echo "Y U no love me?!"
 }
-
-echo "$$" > "$PIDFILE"
 
 trap 'term_handler' SIGTERM
 trap 'int_handler' SIGINT
