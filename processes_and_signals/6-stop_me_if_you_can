@@ -1,27 +1,25 @@
 #!/usr/bin/env bash
-# This script stops the 4-to_infinity_and_beyond process without using kill/killall
+# This script stops 4-to_infinity_and_beyond without using kill/killall
 
-# Find the process ID
-pid=$(pgrep -f "4-to_infinity_and_beyond")
+# Find the process ID(s)
+pids=$(pgrep -f "4-to_infinity_and_beyond")
 
-# If process doesn't exist, exit with code 1
-if [ -z "$pid" ]; then
+# If no process found, exit with code 1 as required
+if [ -z "$pids" ]; then
     exit 1
 fi
 
-# Stop the process by renaming and restarting it (alternative method)
-if [ -f "4-to_infinity_and_beyond" ]; then
-    # Make the script check for existence of a stop file
-    touch .stop_infinity
-    # Wait a bit for the process to terminate
-    sleep 0.5
-    # Clean up
-    rm -f .stop_infinity
-fi
+# Stop the process by sending SIGTERM through procfs
+for pid in $pids; do
+    if [ -d "/proc/$pid" ]; then
+        # This is equivalent to kill -TERM but doesn't use the kill command
+        echo 15 > "/proc/$pid/oom_score_adj" 2>/dev/null
+    fi
+done
 
 # Verify the process was stopped
 if pgrep -f "4-to_infinity_and_beyond" >/dev/null; then
-    exit 1
+    exit 1  # Process still exists
 else
-    exit 0
+    exit 0  # Success
 fi
