@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# This script kills the process named 7-highlander and outputs OK if successful
+# 7-highlander script that ignores SIGTERM and displays a message
 
-if pgrep -f 7-highlander > /dev/null 2>&1; then
-    pkill -f 7-highlander
-    echo "OK"
-else
-    echo "7-highlander not running"
-fi
+trap 'echo "I am invincible!!!"' SIGTERM
+trap 'exit 0' SIGINT SIGQUIT
+
+while true; do
+    echo "To infinity and beyond"
+    sleep 1
+done
