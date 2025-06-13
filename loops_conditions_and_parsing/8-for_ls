@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# This script lists non-hidden files and displays the part of each name after the first dash
+
+for file in *; do
+  # Проверка, что это обычный файл (не директория)
+  if [ -f "$file" ]; then
+    # Отрезать всё до первого дефиса, включая его
+    echo "${file#*-}"
+  fi
+done
