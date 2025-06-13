@@ -1,25 +1,29 @@
 #!/usr/bin/env bash
-# This script stops 4-to_infinity_and_beyond without using kill/killall
+# This script creates a PID file, handles signals, and prints messages indefinitely
 
-# Find the process ID(s)
-pids=$(pgrep -f "4-to_infinity_and_beyond")
+PIDFILE="/tmp/myscript.pid"
 
-# If no process found, exit with code 1 as required
-if [ -z "$pids" ]; then
-    exit 1
-fi
+cleanup() {
+    rm -f "$PIDFILE"
+    exit 0
+}
 
-# Stop the process by sending SIGTERM through procfs
-for pid in $pids; do
-    if [ -d "/proc/$pid" ]; then
-        # This is equivalent to kill -TERM but doesn't use the kill command
-        echo 15 > "/proc/$pid/oom_score_adj" 2>/dev/null
-    fi
+term_handler() {
+    echo "I hate the kill command"
+    cleanup
+}
+
+int_handler() {
+    echo "Y U no love me?!"
+}
+
+echo "$$" > "$PIDFILE"
+
+trap 'term_handler' SIGTERM
+trap 'int_handler' SIGINT
+trap 'cleanup' SIGQUIT
+
+while true; do
+    echo "To infinity and beyond"
+    sleep 1
 done
-
-# Verify the process was stopped
-if pgrep -f "4-to_infinity_and_beyond" >/dev/null; then
-    exit 1  # Process still exists
-else
-    exit 0  # Success
-fi
