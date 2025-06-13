@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
-# This script kills the process named 7-highlander
+# This script kills the process named 7-highlander and outputs OK if successful
 
-# Find the PID(s) of process named 7-highlander and kill them
-pkill -f 7-highlander
+if pgrep -f 7-highlander > /dev/null 2>&1; then
+    pkill -f 7-highlander
+    echo "OK"
+else
+    echo "7-highlander not running"
+fi
