@@ -1,17 +1,29 @@
 #!/usr/bin/env bash
-# Create PID file
-echo $$ > /var/run/myscript.pid
+# PID file location
+PIDFILE="/var/run/myscript.pid"
+
+# Create PID file with proper permissions
+create_pidfile() {
+    echo $$ > "$PIDFILE"
+    chmod 644 "$PIDFILE"
+}
 
 # Clean up PID file on exit
 cleanup() {
-    rm -f /var/run/myscript.pid
+    rm -f "$PIDFILE"
     exit
 }
+
+# Ensure PID file is removed when script exits
+trap cleanup EXIT
 
 # Signal handlers
 trap 'echo "I hate the kill command"; cleanup' SIGTERM
 trap 'echo "Y U no love me?!"' SIGINT
 trap cleanup SIGQUIT
+
+# Create PID file
+create_pidfile
 
 # Main loop
 while true; do
