@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
-# Find the PID of the 4-to_infinity_and_beyond process
-PID=$(pgrep -f "4-to_infinity_and_beyond")
-
-# If the process exists, use gdb to force it to call exit(0)
-if [ -n "$PID" ]; then
-    echo "call exit(0)" | gdb -p "$PID" > /dev/null 2>&1
-fi
+# Find all PIDs of the 4-to_infinity_and_beyond process
+PIDS=$(pgrep -f "4-to_infinity_and_beyond")
+# Terminate each process by sending SIGTERM through /proc filesystem
+for pid in $PIDS; do
+    if [ -d "/proc/$pid" ]; then
+        echo 15 > "/proc/$pid/oom_adj"  # Make process killable
+        echo 1 > "/proc/$pid/oom_score_adj"  # Ensure it gets killed
+    fi
+done
