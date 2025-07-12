@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # This script creates a PID file, displays messages indefinitely,
 # handles SIGTERM/SIGINT signals, and cleans up on termination.
 
