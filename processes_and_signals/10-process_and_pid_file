@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # This script handles signals, writes its PID to a file, and displays messages accordingly
 
 PID_FILE="/var/run/myscript.pid"
