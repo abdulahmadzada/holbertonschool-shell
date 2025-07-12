@@ -1,32 +1,23 @@
-#!/usr/bin/env bash
-# PID file location
-PIDFILE="/var/run/myscript.pid"
+#!/bin/bash
+# This script handles signals, writes its PID to a file, and displays messages accordingly
 
-# Create PID file with proper permissions
-create_pidfile() {
-    echo $$ > "$PIDFILE"
-    chmod 644 "$PIDFILE"
-}
+PID_FILE="/var/run/myscript.pid"
 
-# Clean up PID file on exit
-cleanup() {
-    rm -f "$PIDFILE"
-    exit
-}
+# Записываем PID текущего процесса в файл
+echo $$ > "$PID_FILE"
 
-# Ensure PID file is removed when script exits
-trap cleanup EXIT
-
-# Signal handlers
-trap 'echo "I hate the kill command"; cleanup' SIGTERM
+# Обработка SIGINT (Ctrl+C)
 trap 'echo "Y U no love me?!"' SIGINT
-trap cleanup SIGQUIT
 
-# Create PID file
-create_pidfile
+# Обработка SIGTERM
+trap 'echo "I hate the kill command"' SIGTERM
 
-# Main loop
-while true; do
+# Обработка SIGQUIT и повторная SIGTERM: удаление pid-файла и выход
+trap 'rm -f "$PID_FILE"; exit' SIGQUIT SIGTERM
+
+# Бесконечный цикл
+while true
+do
     echo "To infinity and beyond"
-    sleep 1
+    sleep 2
 done
