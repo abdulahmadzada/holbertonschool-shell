@@ -1,23 +1,14 @@
 #!/usr/bin/env bash
-# This script handles signals, writes its PID to a file, and displays messages accordingly
+# This script writes its PID to /var/run/myscript.pid and handles signals
 
 PID_FILE="/var/run/myscript.pid"
-
-# Записываем PID текущего процесса в файл
 echo $$ > "$PID_FILE"
 
-# Обработка SIGINT (Ctrl+C)
 trap 'echo "Y U no love me?!"' SIGINT
-
-# Обработка SIGTERM
 trap 'echo "I hate the kill command"' SIGTERM
-
-# Обработка SIGQUIT и повторная SIGTERM: удаление pid-файла и выход
 trap 'rm -f "$PID_FILE"; exit' SIGQUIT SIGTERM
 
-# Бесконечный цикл
-while true
-do
-    echo "To infinity and beyond"
-    sleep 2
+while true; do
+  echo "To infinity and beyond"
+  sleep 2
 done
