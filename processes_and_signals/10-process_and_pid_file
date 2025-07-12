@@ -15,7 +15,10 @@ trap 'echo "I hate the kill command"; cleanup' SIGTERM
 trap 'echo "Y U no love me?!"' SIGINT
 trap cleanup SIGQUIT
 
-# Create PID file
+# Create parent directory if it doesn't exist
+mkdir -p /var/run/
+
+# Create PID file with proper permissions
 if ! echo $$ > "$PID_FILE"; then
     echo "Failed to create PID file" >&2
     exit 1
